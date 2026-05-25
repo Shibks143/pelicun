@@ -1,3 +1,6 @@
+# %%
+from __future__ import annotations
+
 # %% [markdown]
 """# Example 1: Simple loss function."""
 
@@ -7,8 +10,7 @@ In this example, a single loss function is defined as a 1:1 mapping of the input
 This means that the resulting loss distribution will be the same as the EDP distribution, allowing us to test and confirm that this is what happens.
 """
 
-# %%
-from __future__ import annotations
+
 
 import numpy as np
 import pandas as pd
