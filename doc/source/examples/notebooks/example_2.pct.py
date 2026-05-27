@@ -162,3 +162,74 @@ temp_dir = tempfile.mkdtemp()
 asmnt.damage.save_sample(f'{temp_dir}/mdl.csv')
 asmnt.damage.load_sample(f'{temp_dir}/mdl.csv')
 pd.testing.assert_frame_equal(before, asmnt.damage.ds_model.sample)
+
+
+## added on 25-05-2026 by shivakumar KS 
+import os
+
+# Create output folder
+os.makedirs(
+    r'E:\OpenSees_PracticeExamples\pelicun\Output',
+    exist_ok=True
+)
+
+# Save damage state probabilities
+probs.to_csv(
+    r'E:\OpenSees_PracticeExamples\pelicun\Output\damage_state_probabilities.csv',
+    index=True
+)
+
+analytical_probs = pd.DataFrame(
+    [[p0, p1, p2]],
+    columns=['DS0', 'DS1', 'DS2']
+)
+
+analytical_probs.to_csv(
+    r'E:\OpenSees_PracticeExamples\pelicun\Output\analytical_probabilities.csv',
+    index=False
+)
+
+
+print("Damage state probabilities saved successfully.")
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Labels
+ds_labels = ['DS0', 'DS1', 'DS2']
+
+# Monte Carlo probabilities
+mc_probs = probs.iloc[0].values
+
+# Analytical probabilities
+an_probs = [p0, p1, p2]
+
+x = np.arange(len(ds_labels))
+width = 0.35
+
+# Figure
+plt.figure(figsize=(8,5))
+
+# Bars
+plt.bar(x - width/2, mc_probs, width, label='Monte Carlo')
+plt.bar(x + width/2, an_probs, width, label='Analytical')
+
+# Labels
+plt.xlabel('Damage State')
+plt.ylabel('Probability')
+plt.title('Damage State Probability Validation')
+
+plt.xticks(x, ds_labels)
+
+plt.legend()
+
+# Save figure
+plt.savefig(
+    r'E:\OpenSees_PracticeExamples\pelicun\Output\damage_state_validation.png',
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+print("Validation plot saved successfully.")

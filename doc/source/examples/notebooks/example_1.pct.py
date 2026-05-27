@@ -14,6 +14,7 @@ This means that the resulting loss distribution will be the same as the EDP dist
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from pelicun import assessment, file_io
 
@@ -99,3 +100,36 @@ loss_vals = loss['repair_cost'].to_numpy()
 assert np.allclose(np.median(loss_vals), 0.05, atol=1e-2)
 # dispersion should be close to 0.9
 assert np.allclose(np.log(loss_vals).std(), 0.90, atol=1e-2)
+
+
+# Save aggregated loss results
+import os
+
+# Create Output folder
+os.makedirs( r'E:\OpenSees_PracticeExamples\pelicun\output', exist_ok=True)
+loss.to_csv(r'E:\OpenSees_PracticeExamples\pelicun\output\loss_results.csv',index=True)
+
+
+print("Loss results saved successfully.")
+
+import matplotlib.pyplot as plt
+
+# Create histogram of repair cost
+plt.figure(figsize=(8,5))
+
+plt.hist(loss_vals, bins=100)
+
+plt.xlabel('Repair Cost')
+plt.ylabel('Frequency')
+plt.title('Distribution of Repair Cost')
+
+# Save plot
+plt.savefig(
+    r'E:\OpenSees_PracticeExamples\pelicun\output\repair_cost_distribution.png',
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+print("Plot saved successfully.")

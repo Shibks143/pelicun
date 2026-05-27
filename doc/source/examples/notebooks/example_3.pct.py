@@ -14,6 +14,12 @@ import tempfile
 import numpy as np
 import pandas as pd
 import pytest
+import os
+import matplotlib.pyplot as plt
+
+output_dir = r'E:\OpenSees_PracticeExamples\pelicun\output'
+os.makedirs(output_dir, exist_ok=True)
+
 
 import pelicun
 from pelicun import assessment, file_io
@@ -214,3 +220,148 @@ with pytest.warns(PelicunWarning):
 
 # %% nbsphinx="hidden"
 assert agg_df is not None
+
+
+## added on 25-05-2026 by Shivakumar K S 
+
+agg_df.to_csv(
+    os.path.join(output_dir, 'aggregated_losses.csv'),
+    index=True
+)
+
+damage_sample = asmnt.damage.ds_model.sample
+damage_sample.to_csv(
+    os.path.join(output_dir, 'damage_sample.csv'),
+    index=True
+)
+
+loss_sample = asmnt.loss.sample
+
+loss_sample.to_csv(
+    os.path.join(output_dir, 'loss_sample.csv'),
+    index=True
+)
+
+demand_sample = asmnt.demand.save_sample()
+demand_sample.to_csv(
+    os.path.join(output_dir, 'demand_sample.csv'),
+    index=True
+)
+
+
+# =========================================================
+# PLOTS
+# =========================================================
+
+# ---------------------------------------------------------
+# 1. Repair Cost Distribution
+# ---------------------------------------------------------
+
+plt.figure(figsize=(7,5))
+
+plt.hist(agg_df[('repair_cost', '')], bins=50)
+
+plt.xlabel('Repair Cost')
+plt.ylabel('Frequency')
+plt.title('Repair Cost Distribution')
+
+plt.savefig(
+    os.path.join(output_dir, 'repair_cost_distribution.png'),
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+
+# ---------------------------------------------------------
+# 2. Parallel Repair Time Distribution
+# ---------------------------------------------------------
+
+plt.figure(figsize=(7,5))
+
+plt.hist(agg_df[('repair_time', 'parallel')], bins=50)
+
+plt.xlabel('Repair Time (Parallel)')
+plt.ylabel('Frequency')
+plt.title('Parallel Repair Time Distribution')
+
+plt.savefig(
+    os.path.join(output_dir, 'parallel_repair_time_distribution.png'),
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+
+# ---------------------------------------------------------
+# 3. Sequential Repair Time Distribution
+# ---------------------------------------------------------
+
+plt.figure(figsize=(7,5))
+
+plt.hist(agg_df[('repair_time', 'sequential')], bins=50)
+
+plt.xlabel('Repair Time (Sequential)')
+plt.ylabel('Frequency')
+plt.title('Sequential Repair Time Distribution')
+
+plt.savefig(
+    os.path.join(output_dir, 'sequential_repair_time_distribution.png'),
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+
+# ---------------------------------------------------------
+# 4. Damage State Frequencies
+# ---------------------------------------------------------
+
+ds_counts = damage_sample.stack().value_counts()
+
+plt.figure(figsize=(7,5))
+
+ds_counts.plot(kind='bar')
+
+plt.xlabel('Damage State')
+plt.ylabel('Frequency')
+plt.title('Damage State Frequencies')
+
+plt.savefig(
+    os.path.join(output_dir, 'damage_state_frequencies.png'),
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+
+# ---------------------------------------------------------
+# 5. Repair Cost vs Parallel Repair Time
+# ---------------------------------------------------------
+
+plt.figure(figsize=(7,5))
+
+plt.scatter(
+    agg_df[('repair_cost', '')],
+    agg_df[('repair_time', 'parallel')],
+    alpha=0.5
+)
+
+plt.xlabel('Repair Cost')
+plt.ylabel('Repair Time (Parallel)')
+plt.title('Repair Cost vs Parallel Repair Time')
+
+plt.savefig(
+    os.path.join(output_dir, 'cost_vs_parallel_time_scatter.png'),
+    dpi=300,
+    bbox_inches='tight'
+)
+
+plt.show()
+
+
+print("All plots saved successfully.")
